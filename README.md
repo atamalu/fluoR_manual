@@ -41,6 +41,8 @@ returned data frame will look like.
 
 ![asdf](./external_figures/fluoR_format_table_example.png)
 
+-----
+
 ## Step 2: Standardize your data
 
 There are many reasons to standardize your data before exploring your
@@ -48,11 +50,12 @@ data.
 
 <b><u> 1. Signal differs between subjects </b></u>
 
-  - Biology
+  - Regardless of the specific technologies used, there is almost always
+    differences in signal strength for each subject
 
 <b><u> 2. Signal differs between trials </b></u>
 
-  - The strength of recording signal tends to <i>decay</i> over time
+  - The strength of recording signal tends to decay over time
 
 <b><u> 3. Utilizing baseline values </b></u>
 
@@ -65,18 +68,26 @@ data.
     using standardization methods (particularly z-scores) also takes
     baseline <i>deviations</i> into consideration.
 
+### Methods of Standardization
+
 A little alteration in how we compute z-scores can make a large
 difference.
 
-### z-scores
+#### z-scores
 
 Consider the traditional z-score computation. This centers every value
 (x) at the mean of the full time series (mu) and divides it by the
 standard deviation of the full time series (sigma).
 
 <!-- 
-$$Z = \frac{x-\mu}{\sigma}$$ 
-Formula is for z-score
+\begin{gather*}
+  Baseline \ Z_{i} = \frac{x_{i}-\mu}{\sigma}
+\end{gather*}
+\begin{align*}
+  \text{where...} \\
+  \mu &= \text{mean of full sample,} \\
+  \sigma &= \text{standard deviation of full sample} \\
+\end{align*}
 -->
 
 ![](./external_figures/equations/z_score.png)
@@ -84,7 +95,7 @@ Formula is for z-score
 This results in the same time series in terms of standard deviations
 from the mean, all in the context of the full time series.
 
-### baseline z-scores
+#### baseline z-scores
 
 Using the baseline period as the input values for computing z-scores can
 be useful in revealing differences from baseline that you may not find
@@ -94,8 +105,14 @@ you can see from the formula, a lower standard deviation will increase
 the upper values - thus making changes in neural activity more apparent.
 
 <!--
-$$Z = \frac{x-\mu_{baseline}}{\sigma_{baseline}}$$
-Formula is for baseline z-scores
+\begin{gather*}
+  Baseline Z_{i} = \frac{x_{i}-\mu_{baseline}}{\sigma_{baseline}}
+\end{gather*}
+\begin{align*}
+  \text{where...} \\
+  \mu_{baseline} &= \text{mean of values from baseline period,} \\
+  \sigma_{baseline} &= \text{standard deviation of values from baseline period} \\
+\end{align*}
 -->
 
 ![](./external_figures/equations/z_score_baseline.png)
@@ -108,6 +125,28 @@ outside of the baseline period will be different using this version, but
 not within the baseline period.
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+#### modified z scores
+
+Waveform data fluctuates naturally. In the event of a change in activity
+due to external stimuli, signal variation tends to rapidly increase
+and/or decrease. Unless you are at a baseline period, the data is likely
+not normally-distributed.
+
+<!--
+\begin{gather*}
+  Modified \ Z_{i} = \frac{0.6745(x_{i}-\widetilde{x})}{MAD}
+\end{gather*}
+\begin{align*}
+  \text{where...} \\
+  \widetilde{x} &= \text{sample median,} \\
+  MAD &= \text{median absolute deviation}
+\end{align*}
+-->
+
+![](./external_figures/equations/z_score_modified.png)
+
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 <!--
 ## Step 3: Explore your data

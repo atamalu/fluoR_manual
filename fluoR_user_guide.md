@@ -148,6 +148,8 @@ not normally-distributed.
 
 ![](fluoR_user_guide_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
+![](./external_figures/tables/standardization_table.png)
+
 <!--
 ## Step 3: Explore your data
 

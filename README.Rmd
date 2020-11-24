@@ -204,6 +204,7 @@ ggplot(df.graph) +
   )
 ```
 
+![](./external_figures/tables/standardization_table.png)
 
 <!--
 ## Step 3: Explore your data

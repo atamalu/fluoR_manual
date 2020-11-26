@@ -73,7 +73,7 @@ Consider the traditional z-score computation. This centers every value (x) at th
 
 <!-- 
 \begin{gather*}
-  Baseline \ Z_{i} = \frac{x_{i}-\mu}{\sigma}
+  Z_{i} = \frac{x_{i}-\mu}{\sigma}
 \end{gather*}
 \begin{align*}
   \text{where...} \\

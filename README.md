@@ -4,7 +4,7 @@ fluoR User Guide
 Analyzing calcium indicator data is a multi-step process that can be
 very confusing for both novices and seasoned scientists.
 
-## Step 1: Convert to fluoR format
+# Step 1: Convert to fluoR format
 
 After exporting your recorded data from your preferred software
 (e.g. MATLAB, Doric software), the first step is to convert your data
@@ -23,7 +23,7 @@ There are two formats of data supported as input:
   - timestamps in the first row
   - one row for each trial’s recorded values
 
-### How it works
+## How it works
 
 The input can be a matrix or data frame - labeled or unlabeled. The
 function detects whether the number of rows are greater than the number
@@ -34,16 +34,14 @@ format. The table is then converted to a data frame, with each column
 being labeled. This makes manually working with the data more convenient
 and R-friendly.
 
-### Output
+## Output
 
 The below table is an informal matrix representation of what the
 returned data frame will look like.
 
 ![asdf](./external_figures/fluoR_format_table_example.png)
 
------
-
-## Step 2: Standardize your data
+# Step 2: Standardize your data
 
 There are many reasons to standardize your data before exploring your
 data.
@@ -68,12 +66,12 @@ data.
     using standardization methods (particularly z-scores) also takes
     baseline <i>deviations</i> into consideration.
 
-### Methods of Standardization
+## Methods of Standardization
 
-A little alteration in how we compute z-scores can make a large
+A little alteration in how we compute z-scores can make a significant
 difference.
 
-#### z-scores
+### z-scores
 
 Consider the traditional z-score computation. This centers every value
 (x) at the mean of the full time series (mu) and divides it by the
@@ -90,19 +88,38 @@ standard deviation of the full time series (sigma).
 \end{align*}
 -->
 
+<BR>
+
 ![](./external_figures/equations/z_score.png)
+
+<BR>
 
 This results in the same time series in terms of standard deviations
 from the mean, all in the context of the full time series.
 
-#### baseline z-scores
+##### R Code
 
-Using the baseline period as the input values for computing z-scores can
-be useful in revealing differences from baseline that you may not find
-by just comparing pre-trial and trial periods. This is in part because
-baseline periods tend to have relatively low variability in general. As
-you can see from the formula, a lower standard deviation will increase
-the upper values - thus making changes in neural activity more apparent.
+``` r
+z.scores <- z_score(xvals = df$Trial8,
+                    mu = mean(df$Trial8), # manual input of mu/sigma optional;
+                    sigma = sd(df$Trial8)) # used for example purposes
+```
+
+##### Visualization
+
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+### baseline z-scores
+
+Using the pre-event baseline period as the input values for computing
+z-scores can be useful in revealing differences from baseline that you
+may not find by just comparing pre-trial and trial periods. This is in
+part because baseline periods tend to have relatively low variability in
+general.
+
+As you can see from the formula, a lower standard deviation will
+increase positive values and decrease negative values - thus making
+changes in neural activity more apparent.
 
 <!--
 \begin{gather*}
@@ -115,7 +132,11 @@ the upper values - thus making changes in neural activity more apparent.
 \end{align*}
 -->
 
+<BR>
+
 ![](./external_figures/equations/z_score_baseline.png)
+
+<BR>
 
 This results in a time series interpreted in terms of standard
 deviations and mean during the baseline period. Baseline z-scores are
@@ -124,14 +145,27 @@ number of deviations from the mean when a subject is at rest. The values
 outside of the baseline period will be different using this version, but
 not within the baseline period.
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+##### R Code
 
-#### modified z scores
+``` r
+### Extract baseline values
+baseline.vals <- df$Trial8[df$Time >= -4 & df$Time <= 0]
 
-Waveform data fluctuates naturally. In the event of a change in activity
-due to external stimuli, signal variation tends to rapidly increase
-and/or decrease. Unless you are at a baseline period, the data is likely
-not normally-distributed.
+### Compute z-scores
+z.scores.baseline <- z_score(xvals = df$Trial8,
+                             mu = mean(baseline.vals),
+                             sigma = sd(baseline.vals))
+```
+
+##### Visualization
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+### modified z scores
+
+Waveform data fluctuates naturally. But in the event of a change in
+activity due to external stimuli, signal variation tends to rapidly
+increase and/or decrease and becomes unruly.
 
 <!--
 \begin{gather*}
@@ -144,11 +178,59 @@ not normally-distributed.
 \end{align*}
 -->
 
+<BR>
+
 ![](./external_figures/equations/z_score_modified.png)
 
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+<BR>
+
+##### R Code
+
+``` r
+z.scores.modified <- z_score(xvals = df$Trial8, 
+                             z.type = 'modified')
+```
+
+##### Visualization
+
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+# z-score comparison
+
+##### Visualization
+
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+## Summary table
 
 ![](./external_figures/tables/standardization_table.png)
+
+### percent change from baseline
+
+Researchers often center data at a pre-event baseline for visualizations
+to improve interpretation and emphasize change due to an experimental
+manipulation. This can be especially useful for presenting to more
+“naive” audiences who may not know what z-scores are.
+
+This tends to be fine. The major issue is that, unlike z-scores, using
+percent change from baseline with time series data does not account for
+changes in deviations and should be mostly used for interpretation and
+presentation purposes, if appropriate.
+
+##### R Code
+
+``` r
+### Extract baseline values
+baseline.vals <- df$Trial8[df$Time >= -4 & df$Time <= 0]
+
+### Compute percent change from baseline
+perc.change <- percent_change(xvals = df$Trial8,
+                              base.val = mean(baseline.vals))
+```
+
+##### Visualization
+
+![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 <!--
 ## Step 3: Explore your data

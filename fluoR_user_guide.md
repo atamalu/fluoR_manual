@@ -81,7 +81,7 @@ standard deviation of the full time series (sigma).
 
 <!-- 
 \begin{gather*}
-  Baseline \ Z_{i} = \frac{x_{i}-\mu}{\sigma}
+  Z_{i} = \frac{x_{i}-\mu}{\sigma}
 \end{gather*}
 \begin{align*}
   \text{where...} \\
